@@ -1,7 +1,10 @@
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -22,8 +25,8 @@ posts: list[dict] = [
     },
 ]
 
-@app.get("/", include_in_schema=False)  # hide from OpenAPI schema
-@app.get("/posts", include_in_schema=False)
+@app.get("/", include_in_schema=False, name="home")  # hide from OpenAPI schema
+@app.get("/posts", include_in_schema=False, name="posts")  # hide from OpenAPI schema
 def get_posts(request: Request):
     return templates.TemplateResponse(
         request, 
